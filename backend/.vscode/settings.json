@@ -1,11 +1,8 @@
 {
-	"typescript.tsdk": "./node_modules/typescript/lib",
-	"files.exclude": {
-		"tsconfig.build.json": true,
-		"yarn.lock": true,
-		"node_modules": true
-	},
-	"importSorter.generalConfiguration.sortOnBeforeSave": true,
-	"files.trimTrailingWhitespace": true,
-	"editor.formatOnSave": false
+  "files.exclude": {
+    "**/.git": true,
+    "node_modules": true,
+    "yarn.lock": true,
+    "dist": true,
+  }
 }
