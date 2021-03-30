@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { config } from 'dotenv';
 import { UsersModule } from './users/users.module';
+import { PlacesModule } from './places/places.module';
 
 config();
 
@@ -18,6 +19,7 @@ config();
       synchronize: true,
     }),
     UsersModule,
+    PlacesModule,
   ],
 })
 export class AppModule {}

@@ -1,12 +1,12 @@
 import { IsNotEmpty } from 'class-validator';
 
-export class CreateUserDto {
+export class CreatePlaceDto {
   @IsNotEmpty()
-  email: string;
+  lng: number;
 
   @IsNotEmpty()
-  password: string;
+  lat: number;
 
   @IsNotEmpty()
-  name: string;
+  placeName: string;
 }
