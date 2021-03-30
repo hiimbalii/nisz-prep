@@ -3,6 +3,7 @@ import { PlacesService } from './places.service';
 import { CreatePlaceDto } from './dto/create-place.dto';
 import { ApiOperation, ApiResponse } from '@nestjs/swagger';
 
+@ApiTags('Place')
 @Controller('check-in')
 export class PlacesController {
   constructor(private readonly placesService: PlacesService) {}
