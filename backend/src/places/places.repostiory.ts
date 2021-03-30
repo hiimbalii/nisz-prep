@@ -17,6 +17,8 @@ export class PlaceRepository extends Repository<Place> {
 
     await place.save();
 
+    this.logger.verbose(`Place created at lng:${lng}; lat:${lat} with name ${placeName}`);
+
     return place;
   }
 }
