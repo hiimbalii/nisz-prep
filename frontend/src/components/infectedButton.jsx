@@ -9,7 +9,7 @@ class InfectedButton extends React.Component {
 
   handleClick = async () => {
     const response = await axios.put(
-      `http://localhost:3001/infected/${this.state.id}`
+      `http://localhost:3001/users/infected/${this.state.id}`
     );
     if (response.status === 404) {
       alert("Nincs ilyen felhasználó");
