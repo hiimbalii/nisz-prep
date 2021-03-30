@@ -9,6 +9,10 @@ export class User extends BaseEntity {
 
   @Column()
   @IsNotEmpty()
+  name: string;
+
+  @Column()
+  @IsNotEmpty()
   email: string;
 
   @Column()
@@ -16,7 +20,16 @@ export class User extends BaseEntity {
   password: string;
 
   @Column()
-  infectedDate: Date | null;
+  @IsNotEmpty()
+  salt: string;
+
+  @Column()
+  infectedDate: Date;
+
+  @Column({
+    nullable: true,
+  })
+  morning: boolean;
 
   @OneToMany(() => Move, move => move.user)
   moves: Move[];
