@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { config } from 'dotenv';
+import { UsersModule } from './users/users.module';
 
 config();
 
@@ -16,6 +17,7 @@ config();
       entities: [__dirname + '/../**/*.entity.js'],
       synchronize: true,
     }),
+    UsersModule,
   ],
 })
 export class AppModule {}
