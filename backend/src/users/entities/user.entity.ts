@@ -1,0 +1,36 @@
+import { IsNotEmpty } from 'class-validator';
+import { Move } from 'src/moves/move.entity';
+import { BaseEntity, Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+
+@Entity('users')
+export class User extends BaseEntity {
+  @PrimaryGeneratedColumn()
+  id: number;
+
+  @Column()
+  @IsNotEmpty()
+  name: string;
+
+  @Column()
+  @IsNotEmpty()
+  email: string;
+
+  @Column()
+  @IsNotEmpty()
+  password: string;
+
+  @Column()
+  @IsNotEmpty()
+  salt: string;
+
+  @Column()
+  infectedDate: Date;
+
+  @Column({
+    nullable: true,
+  })
+  morning: boolean;
+
+  @OneToMany(() => Move, move => move.user)
+  moves: Move[];
+}
