@@ -9,6 +9,7 @@ import {
 } from '@nestjs/common';
 import { Move } from 'src/moves/entities/move.entity';
 import { infectedUsersDto } from './dto/infected-person.dto';
+import { Place } from 'src/places/entities/place.entity';
 
 @EntityRepository(User)
 export class UserRepository extends Repository<User> {
@@ -24,13 +25,26 @@ export class UserRepository extends Repository<User> {
         order: { date: 'DESC' },
         take: 1,
       });
-      if (lastMove.length) delete lastMove[0].id;
+
+      let lastPlace: Place;
+      if (lastMove.length) {
+        const places = await Place.find({ where: {} });
+        for (const place of places) {
+          for (const move of place.moves) {
+            if (JSON.stringify(move) === JSON.stringify(lastMove[0])) lastPlace = place;
+          }
+        }
+        delete lastPlace.moves;
+        delete lastMove[0].id;
+      }
+
       returns.push({
         name: user.name,
         email: user.email,
         id: user.id,
         userInfection: { infectedDate: user.infectedDate, morning: user.morning },
         lastMove: lastMove.length ? { ...lastMove[0] } : {},
+        lastPlace: lastMove.length ? { ...lastPlace } : {},
       });
     }
 

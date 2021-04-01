@@ -20,7 +20,7 @@ export class UsersController {
 
   @Get('infected')
   @ApiOperation({ summary: 'Fertőzött felhasználók kilistázása' })
-  @ApiResponse({ status: 200, description: 'Sikeres művelet' })
+  @ApiResponse({ status: 200, description: 'Sikeres művelet', type: infectedUsersDto })
   @ApiResponse({ status: 500, description: 'Szerverhiba' })
   listInfected(): Promise<infectedUsersDto[]> {
     return this.usersService.listInfected();
@@ -28,7 +28,7 @@ export class UsersController {
 
   @Post('signup')
   @ApiOperation({ summary: 'Felhasználó regisztrálása' })
-  @ApiResponse({ status: 201, description: 'Felhasználó létrehozva' })
+  @ApiResponse({ status: 201, description: 'Felhasználó létrehozva', type: Number })
   @ApiResponse({ status: 400, description: 'Hibás adatok küldve' })
   @ApiResponse({ status: 409, description: 'Már letezik felhasználó a megadott adatokkal' })
   @ApiResponse({ status: 500, description: 'Szerverhiba' })

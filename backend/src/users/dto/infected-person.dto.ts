@@ -24,4 +24,8 @@ export class infectedUsersDto {
   @IsNotEmpty()
   @ApiProperty({ example: {} })
   lastMove: Record<string, never> | { date: Date; morning: boolean };
+
+  @IsNotEmpty()
+  @ApiProperty({ example: {} })
+  lastPlace: Record<string, never> | { id: number; longitude: number; latitude: number };
 }
