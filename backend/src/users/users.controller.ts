@@ -1,8 +1,17 @@
-import { Controller, Post, Body, Param, ValidationPipe, Put, Get } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  Body,
+  Param,
+  ValidationPipe,
+  Put,
+  Get,
+  ParseIntPipe,
+} from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { User } from './entities/user.entity';
+import { infectedUsersDto } from './dto/infected-person.dto';
 
 @ApiTags('User')
 @Controller('users')
@@ -11,7 +20,9 @@ export class UsersController {
 
   @Get('infected')
   @ApiOperation({ summary: 'Fertőzött felhasználók kilistázása' })
-  listInfected() {
+  @ApiResponse({ status: 200, description: 'Sikeres művelet' })
+  @ApiResponse({ status: 500, description: 'Szerverhiba' })
+  listInfected(): Promise<infectedUsersDto[]> {
     return this.usersService.listInfected();
   }
 
@@ -28,9 +39,10 @@ export class UsersController {
   @Put('infected/:id')
   @ApiOperation({ summary: 'Felhasználó jelentése, hogy beteg' })
   @ApiResponse({ status: 200, description: 'Sikeres művelet' })
+  @ApiResponse({ status: 400, description: 'Az ID számmá konvertálása sikertelen' })
   @ApiResponse({ status: 404, description: 'Nincs felhasználó a megadott ID-vel' })
   @ApiResponse({ status: 500, description: 'Szerverhiba' })
-  iHaveCovid(@Param('id', ValidationPipe) id: number): Promise<string> {
-    return this.usersService.iHaveCovid(id, new Date());
+  iHaveCovid(@Param('id', ParseIntPipe) id: number): Promise<string> {
+    return this.usersService.iHaveCovid(id);
   }
 }

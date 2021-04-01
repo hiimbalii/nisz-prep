@@ -1,22 +1,23 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CreateUserDto } from './dto/create-user.dto';
-import { User } from './entities/user.entity';
+import { infectedUsersDto } from './dto/infected-person.dto';
 import { UserRepository } from './users.repository';
 
 @Injectable()
 export class UsersService {
   constructor(@InjectRepository(UserRepository) private userRepository: UserRepository) {}
 
-  listInfected() {
+  listInfected(): Promise<infectedUsersDto[]> {
     return this.userRepository.listInfected();
   }
 
   createUser(createUserDto: CreateUserDto): Promise<number> {
-    return this.userRepository.createUser(createUserDto);
+    const { name, email, password } = createUserDto;
+    return this.userRepository.createUser(name, email, password);
   }
 
-  iHaveCovid(id: number, date: Date): Promise<string> {
-    return this.userRepository.iHaveCovid(id, date);
+  iHaveCovid(id: number): Promise<string> {
+    return this.userRepository.iHaveCovid(id, new Date());
   }
 }

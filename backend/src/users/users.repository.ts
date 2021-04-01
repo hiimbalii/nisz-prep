@@ -1,46 +1,43 @@
 import { EntityRepository, In, Repository } from 'typeorm';
-import { CreateUserDto } from './dto/create-user.dto';
 import { User } from './entities/user.entity';
 import * as bcrypt from 'bcrypt';
 import {
-  BadRequestException,
   ConflictException,
   InternalServerErrorException,
   Logger,
   NotFoundException,
 } from '@nestjs/common';
 import { Move } from 'src/moves/entities/move.entity';
+import { infectedUsersDto } from './dto/infected-person.dto';
 
 @EntityRepository(User)
 export class UserRepository extends Repository<User> {
   private logger = new Logger('UserRepository');
 
-  async listInfected() {
+  async listInfected(): Promise<infectedUsersDto[]> {
     const infectedUsers = await User.find({ morning: In([true, false]) });
-    const valami = [];
-    await infectedUsers.forEach(async user => {
-      const moves = await Move.getRepository().find({
+    const returns = [];
+
+    for (const user of infectedUsers) {
+      const lastMove = await Move.find({
         where: { user: user.id },
         order: { date: 'DESC' },
         take: 1,
       });
-
-      console.log('asdasdsadasd');
-      valami.push({
+      if (lastMove.length) delete lastMove[0].id;
+      returns.push({
         name: user.name,
         email: user.email,
         id: user.id,
         userInfection: { infectedDate: user.infectedDate, morning: user.morning },
-        lastMove: { ...moves[0] },
+        lastMove: lastMove.length ? { ...lastMove[0] } : {},
       });
-    });
-    console.log(valami);
-    return valami;
+    }
+
+    return returns;
   }
 
-  async createUser(createUserDto: CreateUserDto): Promise<number> {
-    const { email, password, name } = createUserDto;
-
+  async createUser(name, email, password): Promise<number> {
     const salt = await bcrypt.genSalt();
 
     const user = new User();
@@ -56,26 +53,25 @@ export class UserRepository extends Repository<User> {
       this.logger.verbose(`User ${name} has successfully registered`);
       return user.id;
     } catch (error) {
-      if (error.code === 'ER_DUP_ENTRY') {
-        throw new ConflictException('Username already exists');
-      } else {
-        console.log(error);
+      if (error.code === 'ER_DUP_ENTRY') throw new ConflictException('Username already exists');
+      else {
+        this.logger.warn(error);
         throw new InternalServerErrorException();
       }
     }
   }
 
   async iHaveCovid(id: number, date: Date): Promise<string> {
-    if (!id) throw new BadRequestException(`No id provided`);
     const user = await User.findOne(id);
     if (!user) throw new NotFoundException(`No user found with id ${id}`);
     const newDate = new Date(date.getTime() + 2000 * 3600);
     user.infectedDate = newDate;
-    user.morning = parseInt(newDate.toISOString().substring(11, 13)) >= 12 ? false : true;
-    this.logger.verbose(`infectedDate for user ${user.name} is now updated`);
+    user.morning = parseInt(newDate.toISOString().substring(11, 13)) < 12;
     try {
       await user.save();
+      this.logger.verbose(`infectedDate for user ${user.name} is now updated`);
     } catch (error) {
+      this.logger.warn(error);
       throw new InternalServerErrorException();
     }
     return '';
