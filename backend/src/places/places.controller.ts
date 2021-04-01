@@ -2,6 +2,7 @@ import { Controller, Post, Body, ValidationPipe, Put, Param, ParseIntPipe } from
 import { PlacesService } from './places.service';
 import { CreatePlaceDto } from './dto/create-place.dto';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { CreatePlaceEmailDto } from './dto/create-place-email.dto';
 
 @ApiTags('Place')
 @Controller('check-in')
@@ -14,11 +15,8 @@ export class PlacesController {
   @ApiResponse({ status: 400, description: 'Nem megfelelő adatok' })
   @ApiResponse({ status: 404, description: 'Nincs felhasználó a megadott emaillel' })
   @ApiResponse({ status: 500, description: 'Szerverhiba' })
-  iHaveBeenHereWithEmail(
-    @Body('email') email: string,
-    @Body(ValidationPipe) createPlaceDto: CreatePlaceDto,
-  ) {
-    return this.placesService.iHaveBeenHereWithEmail(email, createPlaceDto);
+  iHaveBeenHereWithEmail(@Body(ValidationPipe) createPlaceEmailDto: CreatePlaceEmailDto) {
+    return this.placesService.iHaveBeenHereWithEmail(createPlaceEmailDto);
   }
 
   @Put(':id')
