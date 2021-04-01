@@ -9,8 +9,4 @@ export class CreatePlaceDto {
   @IsNotEmpty()
   @ApiProperty({ example: 49 })
   lat: number;
-
-  // @IsNotEmpty()
-  // @ApiProperty({ example: 'Budapest' })
-  // placeName: string;
 }
