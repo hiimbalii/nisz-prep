@@ -15,6 +15,6 @@ export class Place extends BaseEntity {
   @IsNotEmpty()
   latitude: number;
 
-  @OneToMany(() => Move, move => move.place)
+  @OneToMany(() => Move, move => move.place, { eager: true })
   moves: Move[];
 }

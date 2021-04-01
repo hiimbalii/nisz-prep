@@ -17,10 +17,10 @@ export class Move extends BaseEntity {
   morning: boolean;
 
   @IsNotEmpty()
-  @ManyToOne(() => Place, place => place.moves)
+  @ManyToOne(() => Place, place => place.moves, { eager: false })
   place: number;
 
   @IsNotEmpty()
-  @ManyToOne(() => User, user => user.moves)
+  @ManyToOne(() => User, user => user.moves, { eager: false })
   user: number;
 }

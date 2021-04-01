@@ -29,6 +29,6 @@ export class User extends BaseEntity {
   @Column({ nullable: true })
   morning: boolean;
 
-  @OneToMany(() => Move, move => move.user)
+  @OneToMany(() => Move, move => move.user, { eager: true })
   moves: Move[];
 }
