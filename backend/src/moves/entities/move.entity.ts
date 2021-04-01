@@ -12,6 +12,10 @@ export class Move extends BaseEntity {
   @IsNotEmpty()
   date: Date;
 
+  @Column()
+  @IsNotEmpty()
+  morning: boolean;
+
   @IsNotEmpty()
   @ManyToOne(() => Place, place => place.moves)
   place: number;

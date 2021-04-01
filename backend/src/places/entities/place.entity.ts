@@ -1,5 +1,5 @@
 import { IsNotEmpty } from 'class-validator';
-import { Move } from 'src/moves/move.entity';
+import { Move } from 'src/moves/entities/move.entity';
 import { BaseEntity, Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity('places')
@@ -7,17 +7,13 @@ export class Place extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column()
+  @Column('decimal', { precision: 8, scale: 4 })
   @IsNotEmpty()
   longitude: number;
 
-  @Column()
+  @Column('decimal', { precision: 8, scale: 4 })
   @IsNotEmpty()
   latitude: number;
-
-  @Column()
-  @IsNotEmpty()
-  placeName: string;
 
   @OneToMany(() => Move, move => move.place)
   moves: Move[];
