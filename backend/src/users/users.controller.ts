@@ -1,12 +1,19 @@
-import { Controller, Post, Body, Param, ValidationPipe, Put } from '@nestjs/common';
+import { Controller, Post, Body, Param, ValidationPipe, Put, Get } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { User } from './entities/user.entity';
 
 @ApiTags('User')
 @Controller('users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
+
+  @Get('infected')
+  @ApiOperation({ summary: 'Fertőzött felhasználók kilistázása' })
+  listInfected() {
+    return this.usersService.listInfected();
+  }
 
   @Post('signup')
   @ApiOperation({ summary: 'Felhasználó regisztrálása' })

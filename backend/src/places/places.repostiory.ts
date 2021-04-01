@@ -25,6 +25,8 @@ export class PlaceRepository extends Repository<Place> {
     move.date = date;
     move.morning = morning;
     move.user = userId;
+    lng = Math.round(lng * 10000) / 10000;
+    lat = Math.round(lat * 10000) / 10000;
 
     const place = await Place.findOne({ longitude: lng, latitude: lat });
     if (!place) {

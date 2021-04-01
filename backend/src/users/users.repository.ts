@@ -1,4 +1,4 @@
-import { EntityRepository, Repository } from 'typeorm';
+import { EntityRepository, In, Repository } from 'typeorm';
 import { CreateUserDto } from './dto/create-user.dto';
 import { User } from './entities/user.entity';
 import * as bcrypt from 'bcrypt';
@@ -9,10 +9,34 @@ import {
   Logger,
   NotFoundException,
 } from '@nestjs/common';
+import { Move } from 'src/moves/entities/move.entity';
 
 @EntityRepository(User)
 export class UserRepository extends Repository<User> {
   private logger = new Logger('UserRepository');
+
+  async listInfected() {
+    const infectedUsers = await User.find({ morning: In([true, false]) });
+    const valami = [];
+    await infectedUsers.forEach(async user => {
+      const moves = await Move.getRepository().find({
+        where: { user: user.id },
+        order: { date: 'DESC' },
+        take: 1,
+      });
+
+      console.log('asdasdsadasd');
+      valami.push({
+        name: user.name,
+        email: user.email,
+        id: user.id,
+        userInfection: { infectedDate: user.infectedDate, morning: user.morning },
+        lastMove: { ...moves[0] },
+      });
+    });
+    console.log(valami);
+    return valami;
+  }
 
   async createUser(createUserDto: CreateUserDto): Promise<number> {
     const { email, password, name } = createUserDto;
