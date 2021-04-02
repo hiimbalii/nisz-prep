@@ -8,7 +8,7 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { Move } from 'src/moves/entities/move.entity';
-import { infectedUsersDto } from './dto/infected-person.dto';
+import { infectedUsersDto } from './dto/infected-user.dto';
 import { Place } from 'src/places/entities/place.entity';
 
 @EntityRepository(User)
