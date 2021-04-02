@@ -8,46 +8,47 @@ import { User } from 'src/users/entities/user.entity';
 export class PlaceRepository extends Repository<Place> {
   private logger = new Logger('PlaceRepository');
 
-  async createPlace(lng: number, lat: number): Promise<Place> {
-    const place = new Place();
-    place.longitude = lng;
-    place.latitude = lat;
-
-    await place.save();
-
-    this.logger.verbose(`Place created at lng:${lng}; lat:${lat}`);
-
-    return place;
-  }
-
   async iHaveBeenHere(userId: number, date: Date, morning: boolean, lng: number, lat: number) {
     const move = new Move();
     move.date = date;
     move.morning = morning;
     move.user = userId;
+    lng = Math.round(lng * 10000) / 10000;
+    lat = Math.round(lat * 10000) / 10000;
 
     const place = await Place.findOne({ longitude: lng, latitude: lat });
-    if (!place) {
+    let placeId: number;
+    if (place) placeId = place.id;
+    else {
       const { id } = await this.createPlace(lng, lat);
-      move.place = id;
-    } else {
-      move.place = place.id;
+      placeId = id;
     }
+    move.place = placeId;
     try {
       await move.save();
-      this.logger.verbose(`Move been has successfully save`);
+      this.logger.verbose(`Move been has successfully saved with ${placeId} place ID`);
     } catch (error) {
       if (error.code === 'ER_DUP_ENTRY') {
         throw new ConflictException('Move already exists');
       } else {
-        console.log(error);
+        this.logger.warn(error);
         throw new InternalServerErrorException();
       }
     }
   }
 
+  async createPlace(lng: number, lat: number): Promise<Place> {
+    const place = new Place();
+    place.longitude = lng;
+    place.latitude = lat;
+    await place.save();
+
+    this.logger.verbose(`Place created {lng:${lng}; lat:${lat}}`);
+    return place;
+  }
+
   async getUserId(email): Promise<number> {
-    const { id } = await User.findOne(email);
-    return await id;
+    const { id } = await User.findOne({ email });
+    return id;
   }
 }

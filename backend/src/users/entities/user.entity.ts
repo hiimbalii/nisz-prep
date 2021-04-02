@@ -7,11 +7,11 @@ export class User extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column()
+  @Column({ unique: true })
   @IsNotEmpty()
   name: string;
 
-  @Column()
+  @Column({ unique: true })
   @IsNotEmpty()
   email: string;
 
@@ -26,11 +26,9 @@ export class User extends BaseEntity {
   @Column()
   infectedDate: Date;
 
-  @Column({
-    nullable: true,
-  })
+  @Column({ nullable: true })
   morning: boolean;
 
-  @OneToMany(() => Move, move => move.user)
+  @OneToMany(() => Move, move => move.user, { eager: true })
   moves: Move[];
 }
