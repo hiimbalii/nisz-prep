@@ -11,7 +11,7 @@ import {
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { infectedUsersDto } from './dto/infected-user.dto';
+import { InfectedUserDto } from './dto/infected-user.dto';
 
 @ApiTags('User')
 @Controller('users')
@@ -20,9 +20,9 @@ export class UsersController {
 
   @Get('infected')
   @ApiOperation({ summary: 'Fertőzött felhasználók kilistázása' })
-  @ApiResponse({ status: 200, description: 'Sikeres művelet', type: infectedUsersDto })
+  @ApiResponse({ status: 200, description: 'Sikeres művelet', type: InfectedUserDto })
   @ApiResponse({ status: 500, description: 'Szerverhiba' })
-  listInfected(): Promise<infectedUsersDto[]> {
+  listInfected(): Promise<InfectedUserDto[]> {
     return this.usersService.listInfected();
   }
 

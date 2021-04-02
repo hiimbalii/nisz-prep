@@ -8,14 +8,14 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { Move } from 'src/moves/entities/move.entity';
-import { infectedUserDto } from './dto/infected-user.dto';
+import { InfectedUserDto } from './dto/infected-user.dto';
 import { Place } from 'src/places/entities/place.entity';
 
 @EntityRepository(User)
 export class UserRepository extends Repository<User> {
   private logger = new Logger('UserRepository');
 
-  async listInfected(): Promise<infectedUserDto[]> {
+  async listInfected(): Promise<InfectedUserDto[]> {
     const infectedUsers = await User.find({ morning: In([true, false]) });
     const returns = [];
 
