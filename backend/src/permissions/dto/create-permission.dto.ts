@@ -7,7 +7,7 @@ export class CreatePermissionDto {
   name: string;
 
   @IsNotEmpty()
-  @ApiProperty({ example: 'eTörölni lehet vele' })
+  @ApiProperty({ example: 'Törölni lehet vele' })
   description: string;
 
   @IsNotEmpty()

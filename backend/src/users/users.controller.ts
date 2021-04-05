@@ -48,12 +48,22 @@ export class UsersController {
   }
 
   @Put('permission/:code/:id')
-  addPermission(@Param('code') code: string, @Param('id') id: number) {
+  @ApiOperation({ summary: 'Jogosultság hozzáadása egy felhasználóhoz' })
+  @ApiResponse({ status: 200, description: 'Sikeres művelet' })
+  @ApiResponse({ status: 400, description: 'Az ID számmá konvertálása sikertelen' })
+  @ApiResponse({ status: 404, description: 'Nincs ilyen IDjű, vagy kódú adat az adatbázisban' })
+  @ApiResponse({ status: 500, description: 'Szerverhiba' })
+  addPermission(@Param('code') code: string, @Param('id', ParseIntPipe) id: number) {
     return this.usersService.addPermission(code, id);
   }
 
   @Delete('permission/:code/:id')
-  removePermission(@Param('code') code: string, @Param('id') id: number) {
+  @ApiOperation({ summary: 'Jogosultság eltávolítása egy felhasználótól' })
+  @ApiResponse({ status: 200, description: 'Sikeres művelet' })
+  @ApiResponse({ status: 400, description: 'Az ID számmá konvertálása sikertelen' })
+  @ApiResponse({ status: 404, description: 'Nincs ilyen IDjű, vagy kódú adat az adatbázisban' })
+  @ApiResponse({ status: 500, description: 'Szerverhiba' })
+  removePermission(@Param('code') code: string, @Param('id', ParseIntPipe) id: number) {
     return this.usersService.removePermission(code, id);
   }
 }
