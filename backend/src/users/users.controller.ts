@@ -45,4 +45,9 @@ export class UsersController {
   iHaveCovid(@Param('id', ParseIntPipe) id: number): Promise<string> {
     return this.usersService.iHaveCovid(id);
   }
+
+  @Put('permission/:code/:id')
+  addPermission(@Param('code') code: string, @Param('id') id: number) {
+    return this.usersService.addPermission(code, id);
+  }
 }

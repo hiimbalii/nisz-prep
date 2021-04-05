@@ -20,4 +20,8 @@ export class UsersService {
   iHaveCovid(id: number): Promise<string> {
     return this.userRepository.iHaveCovid(id, new Date());
   }
+
+  addPermission(code: string, id: number) {
+    return this.userRepository.addPermission(code, id);
+  }
 }
