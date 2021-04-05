@@ -99,13 +99,34 @@ export class UserRepository extends Repository<User> {
     if (!perm) throw new NotFoundException(`Permission with code ${code} is not found`);
 
     for (const i of user.permissions) {
-      if (JSON.stringify(i) === JSON.stringify(perm)) return '';
+      if (i.id === perm.id) return '';
     }
     user.permissions.push(perm);
 
     try {
       await user.save();
       this.logger.verbose(`${user.id} felhasználónak ${perm.code} jogosultság adva`);
+    } catch (error) {
+      this.logger.warn(error);
+      throw new InternalServerErrorException();
+    }
+  }
+  async removePermission(code: string, id: number) {
+    const user = await User.findOne(id, { relations: ['permissions'] });
+    const perm = await Permission.findOne({ code });
+    if (!user) throw new NotFoundException(`User with id ${id} not found`);
+    if (!perm) throw new NotFoundException(`Permission with code ${code} is not found`);
+
+    let hasPermission = false;
+    for (const i of user.permissions) {
+      if (i.id === perm.id) hasPermission = true;
+    }
+    if (!hasPermission) return '';
+
+    user.permissions = user.permissions.filter(x => perm.id !== x.id);
+    try {
+      await user.save();
+      this.logger.verbose(`${user.id} felhasználónak ${perm.code} jogosultság eltávolítva`);
     } catch (error) {
       this.logger.warn(error);
       throw new InternalServerErrorException();

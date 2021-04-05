@@ -24,4 +24,8 @@ export class UsersService {
   addPermission(code: string, id: number) {
     return this.userRepository.addPermission(code, id);
   }
+
+  removePermission(code: string, id: number) {
+    return this.userRepository.removePermission(code, id);
+  }
 }

@@ -7,6 +7,7 @@ import {
   Put,
   Get,
   ParseIntPipe,
+  Delete,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -49,5 +50,10 @@ export class UsersController {
   @Put('permission/:code/:id')
   addPermission(@Param('code') code: string, @Param('id') id: number) {
     return this.usersService.addPermission(code, id);
+  }
+
+  @Delete('permission/:code/:id')
+  removePermission(@Param('code') code: string, @Param('id') id: number) {
+    return this.usersService.removePermission(code, id);
   }
 }
