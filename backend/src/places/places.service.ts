@@ -2,7 +2,7 @@ import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CreatePlaceEmailDto } from './dto/create-place-email.dto';
 import { CreatePlaceDto } from './dto/create-place.dto';
-import { PlaceRepository } from './places.repostiory';
+import { PlaceRepository } from './places.repository';
 
 @Injectable()
 export class PlacesService {

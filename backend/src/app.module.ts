@@ -3,6 +3,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { config } from 'dotenv';
 import { UsersModule } from './users/users.module';
 import { PlacesModule } from './places/places.module';
+import { PermissionsModule } from './permissions/permissions.module';
 
 config();
 
@@ -20,6 +21,7 @@ config();
     }),
     UsersModule,
     PlacesModule,
+    PermissionsModule,
   ],
 })
 export class AppModule {}

@@ -7,6 +7,7 @@ import {
   Put,
   Get,
   ParseIntPipe,
+  Delete,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -44,5 +45,25 @@ export class UsersController {
   @ApiResponse({ status: 500, description: 'Szerverhiba' })
   iHaveCovid(@Param('id', ParseIntPipe) id: number): Promise<string> {
     return this.usersService.iHaveCovid(id);
+  }
+
+  @Put('permission/:code/:id')
+  @ApiOperation({ summary: 'Jogosultság hozzáadása egy felhasználóhoz' })
+  @ApiResponse({ status: 200, description: 'Sikeres művelet' })
+  @ApiResponse({ status: 400, description: 'Az ID számmá konvertálása sikertelen' })
+  @ApiResponse({ status: 404, description: 'Nincs ilyen IDjű, vagy kódú adat az adatbázisban' })
+  @ApiResponse({ status: 500, description: 'Szerverhiba' })
+  addPermission(@Param('code') code: string, @Param('id', ParseIntPipe) id: number) {
+    return this.usersService.addPermission(code, id);
+  }
+
+  @Delete('permission/:code/:id')
+  @ApiOperation({ summary: 'Jogosultság eltávolítása egy felhasználótól' })
+  @ApiResponse({ status: 200, description: 'Sikeres művelet' })
+  @ApiResponse({ status: 400, description: 'Az ID számmá konvertálása sikertelen' })
+  @ApiResponse({ status: 404, description: 'Nincs ilyen IDjű, vagy kódú adat az adatbázisban' })
+  @ApiResponse({ status: 500, description: 'Szerverhiba' })
+  removePermission(@Param('code') code: string, @Param('id', ParseIntPipe) id: number) {
+    return this.usersService.removePermission(code, id);
   }
 }
