@@ -1,6 +1,6 @@
 import { IsNotEmpty } from 'class-validator';
 import { User } from 'src/users/entities/user.entity';
-import { BaseEntity, Column, Entity, JoinTable, ManyToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { BaseEntity, Column, Entity, ManyToMany, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity('permissions')
 export class Permission extends BaseEntity {
@@ -19,8 +19,6 @@ export class Permission extends BaseEntity {
   @IsNotEmpty()
   code: string;
 
-  // @OneToMany(() => Move, move => move.user, { eager: true })
   @ManyToMany(() => User, user => user.permissions)
-  @JoinTable()
   users: User[];
 }
