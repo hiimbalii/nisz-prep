@@ -77,10 +77,10 @@ export class UserRepository extends Repository<User> {
     }
   }
 
-  async signinUser(email, password) {
-    await this.validateUser(email, password);
-
-    return 'Siker!';
+  async signinUser(email, password): Promise<User> {
+    const user = await this.validateUser(email, password);
+    this.logger.verbose(`User ${user.name} has successfully signed in`);
+    return user;
   }
 
   async validateUser(email, password) {

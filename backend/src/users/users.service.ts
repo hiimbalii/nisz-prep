@@ -1,13 +1,18 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CreateUserDto } from './dto/create-user.dto';
 import { InfectedUserDto } from './dto/infected-user.dto';
 import { SigninUserDto } from './dto/signin-user.dto';
+import { JwtPayloadDto } from './jwt-payload.dto';
 import { UserRepository } from './users.repository';
 
 @Injectable()
 export class UsersService {
-  constructor(@InjectRepository(UserRepository) private userRepository: UserRepository) {}
+  constructor(
+    @InjectRepository(UserRepository) private userRepository: UserRepository,
+    private jwtService: JwtService,
+  ) {}
 
   listInfected(): Promise<InfectedUserDto[]> {
     return this.userRepository.listInfected();
@@ -18,9 +23,17 @@ export class UsersService {
     return this.userRepository.createUser(name, email, password);
   }
 
-  signinUser(signinUserDto: SigninUserDto) {
+  async signinUser(signinUserDto: SigninUserDto): Promise<{ accessToken: string }> {
     const { email, password } = signinUserDto;
-    return this.userRepository.signinUser(email, password);
+    const user = await this.userRepository.signinUser(email, password);
+    if (!user) {
+      throw new UnauthorizedException('Invalid credentials');
+    }
+
+    const permissionCodes = user.permissions.map(permission => permission.code);
+    const payload: JwtPayloadDto = { email: user.email, permissions: permissionCodes, id: user.id };
+    const accessToken = await this.jwtService.sign(payload);
+    return { accessToken };
   }
 
   iHaveCovid(id: number): Promise<string> {
