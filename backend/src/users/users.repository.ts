@@ -6,6 +6,7 @@ import {
   InternalServerErrorException,
   Logger,
   NotFoundException,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { Move } from 'src/moves/entities/move.entity';
 import { InfectedUserDto } from './dto/infected-user.dto';
@@ -52,7 +53,7 @@ export class UserRepository extends Repository<User> {
     return returns;
   }
 
-  async createUser(name, email, password): Promise<number> {
+  async createUser(name, email, password) {
     const salt = await bcrypt.genSalt();
 
     const user = new User();
@@ -66,14 +67,24 @@ export class UserRepository extends Repository<User> {
     try {
       await user.save();
       this.logger.verbose(`User ${name} has successfully registered`);
-      return user.id;
+      return this.signinUser(user.email, password);
     } catch (error) {
-      if (error.code === 'ER_DUP_ENTRY') throw new ConflictException('Username already exists');
+      if (error.code === 'ER_DUP_ENTRY') throw new ConflictException('Email already exists');
       else {
         this.logger.warn(error);
         throw new InternalServerErrorException();
       }
     }
+  }
+
+  async signinUser(email, password) {
+    const user = await User.findOne({ email }, { relations: ['permissions'] });
+    if (!user) throw new NotFoundException(`User with ${email} not found`);
+
+    const passwd = await bcrypt.hash(password, user.salt);
+    if (!(passwd === user.password)) throw new UnauthorizedException('Wrong password');
+
+    return 'Siker!';
   }
 
   async iHaveCovid(id: number, date: Date): Promise<string> {

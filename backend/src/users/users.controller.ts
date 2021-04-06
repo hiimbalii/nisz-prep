@@ -13,6 +13,7 @@ import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { InfectedUserDto } from './dto/infected-user.dto';
+import { SigninUserDto } from './dto/signin-user.dto';
 
 @ApiTags('User')
 @Controller('users')
@@ -33,8 +34,13 @@ export class UsersController {
   @ApiResponse({ status: 400, description: 'Hibás adatok küldve' })
   @ApiResponse({ status: 409, description: 'Már letezik felhasználó a megadott adatokkal' })
   @ApiResponse({ status: 500, description: 'Szerverhiba' })
-  createUser(@Body(ValidationPipe) createUserDto: CreateUserDto): Promise<number> {
+  createUser(@Body(ValidationPipe) createUserDto: CreateUserDto) {
     return this.usersService.createUser(createUserDto);
+  }
+
+  @Post('signin')
+  signIn(@Body(ValidationPipe) signinUserDto: SigninUserDto) {
+    return this.usersService.signinUser(signinUserDto);
   }
 
   @Put('infected/:id')

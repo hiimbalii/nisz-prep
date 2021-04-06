@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CreateUserDto } from './dto/create-user.dto';
 import { InfectedUserDto } from './dto/infected-user.dto';
+import { SigninUserDto } from './dto/signin-user.dto';
 import { UserRepository } from './users.repository';
 
 @Injectable()
@@ -12,9 +13,14 @@ export class UsersService {
     return this.userRepository.listInfected();
   }
 
-  createUser(createUserDto: CreateUserDto): Promise<number> {
+  createUser(createUserDto: CreateUserDto) {
     const { name, email, password } = createUserDto;
     return this.userRepository.createUser(name, email, password);
+  }
+
+  signinUser(signinUserDto: SigninUserDto) {
+    const { email, password } = signinUserDto;
+    return this.userRepository.signinUser(email, password);
   }
 
   iHaveCovid(id: number): Promise<string> {
