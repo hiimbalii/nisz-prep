@@ -41,10 +41,10 @@ export class UsersService {
   }
 
   addPermission(code: string, id: number) {
-    return this.userRepository.addPermission(code, id);
+    return this.userRepository.addPermission(code.toUpperCase(), id);
   }
 
   removePermission(code: string, id: number) {
-    return this.userRepository.removePermission(code, id);
+    return this.userRepository.removePermission(code.toUpperCase(), id);
   }
 }
