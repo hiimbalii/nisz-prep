@@ -6,7 +6,8 @@ import { UserRepository } from './users.repository';
 import { JwtModule } from '@nestjs/jwt';
 import { JwtStrategy } from './strategies/jwt.strategy';
 import { TypeOrmModule } from '@nestjs/typeorm';
-
+import { config } from 'dotenv';
+config();
 @Module({
   controllers: [UsersController],
   imports: [
