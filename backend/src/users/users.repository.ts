@@ -78,13 +78,18 @@ export class UserRepository extends Repository<User> {
   }
 
   async signinUser(email, password) {
+    await this.validateUser(email, password);
+
+    return 'Siker!';
+  }
+
+  async validateUser(email, password) {
     const user = await User.findOne({ email }, { relations: ['permissions'] });
     if (!user) throw new NotFoundException(`User with ${email} not found`);
 
     const passwd = await bcrypt.hash(password, user.salt);
     if (!(passwd === user.password)) throw new UnauthorizedException('Wrong password');
-
-    return 'Siker!';
+    return user;
   }
 
   async iHaveCovid(id: number, date: Date): Promise<string> {
