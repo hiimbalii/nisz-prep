@@ -19,6 +19,6 @@ config();
     TypeOrmModule.forFeature([UserRepository]),
   ],
   providers: [UsersService, UserRepository, JwtStrategy],
-  exports: [UsersModule],
+  exports: [UsersModule, JwtStrategy, PassportModule],
 })
 export class UsersModule {}

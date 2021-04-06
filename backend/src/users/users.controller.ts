@@ -16,6 +16,7 @@ import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { InfectedUserDto } from './dto/infected-user.dto';
 import { SigninUserDto } from './dto/signin-user.dto';
 import { AuthGuard } from '@nestjs/passport';
+import { GetPermissions } from './decorators/get-permissions.decorator';
 
 @ApiTags('User')
 @Controller('users')
@@ -50,14 +51,22 @@ export class UsersController {
   }
 
   @Put('infected/:id')
+  @UseGuards(AuthGuard())
   @ApiOperation({ summary: 'Felhasználó jelentése, hogy beteg' })
   @ApiResponse({ status: 200, description: 'Sikeres művelet' })
   @ApiResponse({ status: 400, description: 'Az ID számmá konvertálása sikertelen' })
   @ApiResponse({ status: 404, description: 'Nincs felhasználó a megadott ID-vel' })
   @ApiResponse({ status: 500, description: 'Szerverhiba' })
-  @UseGuards(AuthGuard())
   iHaveCovid(@Param('id', ParseIntPipe) id: number): Promise<string> {
     return this.usersService.iHaveCovid(id);
+  }
+
+  @Post('test')
+  @UseGuards(AuthGuard())
+  test(@GetPermissions() perm) {
+    console.log(perm);
+
+    return 'OK!';
   }
 
   @Put('permission/:code/:id')
