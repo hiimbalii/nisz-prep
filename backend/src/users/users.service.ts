@@ -4,7 +4,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { CreateUserDto } from './dto/create-user.dto';
 import { InfectedUserDto } from './dto/infected-user.dto';
 import { SigninUserDto } from './dto/signin-user.dto';
-import { JwtPayloadDto } from './jwt-payload.dto';
+import { JwtPayloadInterface } from './interfaces/jwt-payload.interface';
 import { UserRepository } from './users.repository';
 
 @Injectable()
@@ -31,7 +31,11 @@ export class UsersService {
     }
 
     const permissionCodes = user.permissions.map(permission => permission.code);
-    const payload: JwtPayloadDto = { email: user.email, permissions: permissionCodes, id: user.id };
+    const payload: JwtPayloadInterface = {
+      email: user.email,
+      permissions: permissionCodes,
+      id: user.id,
+    };
     const accessToken = await this.jwtService.sign(payload);
     return { accessToken };
   }
