@@ -4,19 +4,16 @@ import { UsersService } from './users.service';
 import { UsersController } from './users.controller';
 import { UserRepository } from './users.repository';
 import { JwtModule } from '@nestjs/jwt';
-import { config } from 'dotenv';
 import { JwtStrategy } from './jwt.strategy';
 import { TypeOrmModule } from '@nestjs/typeorm';
-
-config();
 
 @Module({
   controllers: [UsersController],
   imports: [
     PassportModule.register({ defaultStrategy: 'jwt' }),
     JwtModule.register({
-      secret: process.env.JWT_SECRET || 'niszIsTheBest123',
-      signOptions: { expiresIn: process.env.JWT_EXPIRES_IN || 3600000 },
+      secret: process.env.SECRET || 'niszIsTheBest123',
+      signOptions: { expiresIn: process.env.EXPIRES_IN || '1h' },
     }),
     TypeOrmModule.forFeature([UserRepository]),
   ],
