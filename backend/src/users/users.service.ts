@@ -18,9 +18,10 @@ export class UsersService {
     return this.userRepository.listInfected();
   }
 
-  createUser(createUserDto: CreateUserDto) {
+  async createUser(createUserDto: CreateUserDto): Promise<{ accessToken: string }> {
     const { name, email, password } = createUserDto;
-    return this.userRepository.createUser(name, email, password);
+    await this.userRepository.createUser(name, email, password);
+    return await this.signinUser({ email, password });
   }
 
   async signinUser(signinUserDto: SigninUserDto): Promise<{ accessToken: string }> {

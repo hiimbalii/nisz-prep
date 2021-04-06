@@ -53,9 +53,8 @@ export class UserRepository extends Repository<User> {
     return returns;
   }
 
-  async createUser(name, email, password) {
+  async createUser(name, email, password): Promise<void> {
     const salt = await bcrypt.genSalt();
-
     const user = new User();
     user.email = email;
     user.password = await bcrypt.hash(password, salt);
@@ -67,7 +66,6 @@ export class UserRepository extends Repository<User> {
     try {
       await user.save();
       this.logger.verbose(`User ${name} has successfully registered`);
-      return this.signinUser(user.email, password);
     } catch (error) {
       if (error.code === 'ER_DUP_ENTRY') throw new ConflictException('Email already exists');
       else {
@@ -83,8 +81,10 @@ export class UserRepository extends Repository<User> {
     return user;
   }
 
-  async validateUser(email, password) {
+  async validateUser(email, password): Promise<User> {
     const user = await User.findOne({ email }, { relations: ['permissions'] });
+    console.log(user);
+
     if (!user) throw new NotFoundException(`User with ${email} not found`);
 
     const passwd = await bcrypt.hash(password, user.salt);

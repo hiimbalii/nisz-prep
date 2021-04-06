@@ -32,15 +32,19 @@ export class UsersController {
 
   @Post('signup')
   @ApiOperation({ summary: 'Felhasználó regisztrálása' })
-  @ApiResponse({ status: 201, description: 'Felhasználó létrehozva', type: Number })
+  @ApiResponse({ status: 201, description: 'Felhasználó létrehozva' })
   @ApiResponse({ status: 400, description: 'Hibás adatok küldve' })
   @ApiResponse({ status: 409, description: 'Már letezik felhasználó a megadott adatokkal' })
   @ApiResponse({ status: 500, description: 'Szerverhiba' })
-  createUser(@Body(ValidationPipe) createUserDto: CreateUserDto) {
+  createUser(@Body(ValidationPipe) createUserDto: CreateUserDto): Promise<{ accessToken: string }> {
     return this.usersService.createUser(createUserDto);
   }
 
   @Post('signin')
+  @ApiOperation({ summary: 'Felhasználó beléptetése' })
+  @ApiResponse({ status: 201, description: 'Sikeres bejelentkezés' })
+  @ApiResponse({ status: 400, description: 'Hibás adatok küldve' })
+  @ApiResponse({ status: 500, description: 'Szerverhiba' })
   signIn(@Body(ValidationPipe) signinUserDto: SigninUserDto): Promise<{ accessToken: string }> {
     return this.usersService.signinUser(signinUserDto);
   }
