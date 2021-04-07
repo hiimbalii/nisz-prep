@@ -12,7 +12,7 @@ import {
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
-import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { InfectedUserDto } from './dto/infected-user.dto';
 import { SigninUserDto } from './dto/signin-user.dto';
 import { AuthGuard } from '@nestjs/passport';
@@ -57,26 +57,32 @@ export class UsersController {
   @ApiOperation({ summary: 'Felhasználó jelentése, hogy beteg' })
   @ApiResponse({ status: 200, description: 'Sikeres művelet' })
   @ApiResponse({ status: 400, description: 'Az ID számmá konvertálása sikertelen' })
-  @ApiResponse({ status: 404, description: 'Nincs felhasználó a megadott ID-vel' })
+  @ApiResponse({ status: 401, description: 'Hibás token' })
   @ApiResponse({ status: 500, description: 'Szerverhiba' })
   iHaveCovid(@GetUserid() id: number): Promise<string> {
     return this.usersService.iHaveCovid(id);
   }
 
-  @Post('test')
-  @Permissions('del', 'read')
-  @UseGuards(PermissionsGuard)
-  @UseGuards(AuthGuard())
-  test(@GetUserid() id) {
-    console.log(id);
+  // @Post('test')
+  // @Permissions('del', 'read')
+  // @UseGuards(PermissionsGuard)
+  // @UseGuards(AuthGuard())
+  // test(@GetUserid() id) {
+  //   console.log(id);
 
-    return 'OK!';
-  }
+  //   return 'OK!';
+  // }
 
   @Put('permission/:code/:id')
+  @Permissions('PERMISSION')
+  @UseGuards(PermissionsGuard)
+  @UseGuards(AuthGuard())
+  @ApiBearerAuth()
   @ApiOperation({ summary: 'Jogosultság hozzáadása egy felhasználóhoz' })
   @ApiResponse({ status: 200, description: 'Sikeres művelet' })
   @ApiResponse({ status: 400, description: 'Az ID számmá konvertálása sikertelen' })
+  @ApiResponse({ status: 401, description: 'Hibás Token' })
+  @ApiResponse({ status: 403, description: 'Nincs jogosultság' })
   @ApiResponse({ status: 404, description: 'Nincs ilyen IDjű, vagy kódú adat az adatbázisban' })
   @ApiResponse({ status: 500, description: 'Szerverhiba' })
   addPermission(@Param('code') code: string, @Param('id', ParseIntPipe) id: number) {
@@ -84,9 +90,15 @@ export class UsersController {
   }
 
   @Delete('permission/:code/:id')
+  @Permissions('PERMISSION')
+  @UseGuards(PermissionsGuard)
+  @UseGuards(AuthGuard())
+  @ApiBearerAuth()
   @ApiOperation({ summary: 'Jogosultság eltávolítása egy felhasználótól' })
   @ApiResponse({ status: 200, description: 'Sikeres művelet' })
   @ApiResponse({ status: 400, description: 'Az ID számmá konvertálása sikertelen' })
+  @ApiResponse({ status: 401, description: 'Hibás Token' })
+  @ApiResponse({ status: 403, description: 'Nincs jogosultság' })
   @ApiResponse({ status: 404, description: 'Nincs ilyen IDjű, vagy kódú adat az adatbázisban' })
   @ApiResponse({ status: 500, description: 'Szerverhiba' })
   removePermission(@Param('code') code: string, @Param('id', ParseIntPipe) id: number) {
