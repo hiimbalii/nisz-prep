@@ -7,6 +7,10 @@ import { Permission } from '../../permissions/entities/permission.entity';
 export default class CreateUsers implements Seeder {
   public async run(factory: Factory, connection: Connection): Promise<any> {
     const salt = genSaltSync();
+    const permission = await connection
+      .getRepository(Permission)
+      .findOne({ where: { code: 'ADMIN' } });
+
     const admin = new User();
     admin.id = 1;
     admin.name = 'Admin';
@@ -16,17 +20,12 @@ export default class CreateUsers implements Seeder {
     admin.salt = salt;
     admin.password = hashSync('admin', salt);
     admin.permissions = [];
-    admin.permissions.push(
-      await connection.getRepository(Permission).findOne({ where: { code: 'ADMIN' } }),
-    );
-
-    const vals = await factory(User)().createMany(10);
+    admin.permissions.push(permission);
 
     try {
       await admin.save();
-      await connection.createQueryBuilder().insert().into(User).values(vals).execute();
     } catch (err) {
-      if (err.sqlMessage !== "Duplicate entry '1' for key 'PRIMARY'") console.log(err);
+      if (err.errno !== 1062) console.log(err);
     }
   }
 }
