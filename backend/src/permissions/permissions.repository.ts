@@ -6,7 +6,8 @@ import { ConflictException, InternalServerErrorException, Logger } from '@nestjs
 export class PermissionsRepository extends Repository<Permission> {
   private logger = new Logger('PermissionRepository');
 
-  async createPermission(name, desc, code) {
+  async createPermission(name, desc, code, uName) {
+    this.logger.log(`Permission creation started by ${uName}`);
     const permission = new Permission();
     permission.name = name;
     permission.description = desc;
@@ -14,7 +15,7 @@ export class PermissionsRepository extends Repository<Permission> {
 
     try {
       await permission.save();
-      this.logger.verbose(`Permission ${code} has successfully registered`);
+      this.logger.verbose(`Permission ${code} has successfully registered by user ${uName}`);
       return permission;
     } catch (error) {
       if (error.code === 'ER_DUP_ENTRY')

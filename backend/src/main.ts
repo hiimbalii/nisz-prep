@@ -2,9 +2,11 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { config } from 'dotenv';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import { Logger } from '@nestjs/common';
 
 async function bootstrap() {
   config();
+  const logger = new Logger('START');
   const swaggerConf = new DocumentBuilder()
     .setTitle('Covid tracker')
     .setDescription('A Covid-Tracker API-jának dokumentációja swagger segítségével.')
@@ -17,6 +19,8 @@ async function bootstrap() {
   const swaggerDoc = SwaggerModule.createDocument(app, swaggerConf);
   SwaggerModule.setup(process.env.SWAGGER_LINK || 'swagger', app, swaggerDoc);
 
-  await app.listen(process.env.PORT || 3000);
+  await app.listen(process.env.PORT || 3000, () => {
+    logger.debug('------------------------------------------------');
+  });
 }
 bootstrap();

@@ -49,11 +49,12 @@ export class UserRepository extends Repository<User> {
         lastPlace: lastMove.length ? { ...lastPlace } : {},
       });
     }
-
+    this.logger.verbose(`Infected list has been sent`);
     return returns;
   }
 
   async createUser(name, email, password): Promise<void> {
+    this.logger.log(`User creation started`);
     const salt = await bcrypt.genSalt();
     const user = new User();
     user.email = email;
@@ -91,6 +92,7 @@ export class UserRepository extends Repository<User> {
   }
 
   async iHaveCovid(id: number, date: Date): Promise<string> {
+    this.logger.log(`User indicated thats they are sick`);
     const user = await User.findOne(id);
     if (!user) throw new NotFoundException(`No user found with id ${id}`);
     const newDate = new Date(date.getTime() + 2000 * 3600);
@@ -107,6 +109,7 @@ export class UserRepository extends Repository<User> {
   }
 
   async addPermission(code: string, id: number) {
+    this.logger.log(`Permission started to add`);
     const user = await User.findOne(id, { relations: ['permissions'] });
     const perm = await Permission.findOne({ code });
     if (!user) throw new NotFoundException(`User with id ${id} not found`);
@@ -119,13 +122,14 @@ export class UserRepository extends Repository<User> {
 
     try {
       await user.save();
-      this.logger.verbose(`${user.id} felhasználónak ${perm.code} jogosultság adva`);
+      this.logger.verbose(`Permission ${perm.code} has been successfully added to ${user.name}`);
     } catch (error) {
       this.logger.warn(error);
       throw new InternalServerErrorException();
     }
   }
   async removePermission(code: string, id: number) {
+    this.logger.log(`Permission started to remove`);
     const user = await User.findOne(id, { relations: ['permissions'] });
     const perm = await Permission.findOne({ code });
     if (!user) throw new NotFoundException(`User with id ${id} not found`);
@@ -140,7 +144,9 @@ export class UserRepository extends Repository<User> {
     user.permissions = user.permissions.filter(x => perm.id !== x.id);
     try {
       await user.save();
-      this.logger.verbose(`${user.id} felhasználónak ${perm.code} jogosultság eltávolítva`);
+      this.logger.verbose(
+        `Permission ${perm.code} has been successfully removed from ${user.name}`,
+      );
     } catch (error) {
       this.logger.warn(error);
       throw new InternalServerErrorException();

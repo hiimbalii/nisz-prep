@@ -9,8 +9,8 @@ export class PermissionsService {
     @InjectRepository(PermissionsRepository) private permissionRepository: PermissionsRepository,
   ) {}
 
-  createPermission(createPermissionDto: CreatePermissionDto) {
+  createPermission(createPermissionDto: CreatePermissionDto, uName: string) {
     const { name, description, code } = createPermissionDto;
-    return this.permissionRepository.createPermission(name, description, code.toUpperCase());
+    return this.permissionRepository.createPermission(name, description, code.toUpperCase(), uName);
   }
 }
