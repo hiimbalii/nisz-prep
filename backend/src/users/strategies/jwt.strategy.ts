@@ -15,7 +15,9 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     });
   }
 
-  async validate(payload: JwtPayloadInterface): Promise<{ permissions: string[]; id: number }> {
+  async validate(
+    payload: JwtPayloadInterface,
+  ): Promise<{ permissions: string[]; id: number; name: string }> {
     const { email } = payload;
     const user = await User.findOne({ email }, { relations: ['permissions'] });
     if (!user) {
@@ -23,6 +25,6 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     }
     const permissions = user.permissions.map(perm => perm.code);
 
-    return { permissions, id: user.id };
+    return { permissions, id: user.id, name: user.name };
   }
 }
