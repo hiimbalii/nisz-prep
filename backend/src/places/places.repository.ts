@@ -1,13 +1,7 @@
-import {
-  ConflictException,
-  InternalServerErrorException,
-  Logger,
-  NotFoundException,
-} from '@nestjs/common';
+import { ConflictException, InternalServerErrorException, Logger } from '@nestjs/common';
 import { EntityRepository, Repository } from 'typeorm';
 import { Place } from './entities/place.entity';
 import { Move } from '../moves/entities/move.entity';
-import { User } from 'src/users/entities/user.entity';
 
 @EntityRepository(Place)
 export class PlaceRepository extends Repository<Place> {
@@ -50,12 +44,5 @@ export class PlaceRepository extends Repository<Place> {
 
     this.logger.verbose(`Place created {lng:${lng}; lat:${lat}}`);
     return place;
-  }
-
-  async getUserId(email): Promise<number> {
-    const user = await User.findOne({ email });
-    if (!user) throw new NotFoundException('No user with this email!');
-    const { id } = user;
-    return id;
   }
 }
