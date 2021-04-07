@@ -1,7 +1,7 @@
 import { Controller, Post, Body, ValidationPipe, UseGuards } from '@nestjs/common';
 import { PlacesService } from './places.service';
 import { CreatePlaceDto } from './dto/create-place.dto';
-import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { AuthGuard } from '@nestjs/passport';
 import { GetUserid } from 'src/users/decorators/get-userid.decorator';
 
@@ -12,6 +12,7 @@ export class PlacesController {
 
   @Post()
   @UseGuards(AuthGuard())
+  @ApiBearerAuth()
   @ApiOperation({ summary: 'Felhasználó jelentése, hogy volt valahol' })
   @ApiResponse({ status: 200, description: 'Sikeres művelet' })
   @ApiResponse({ status: 400, description: 'Nem megfelelő adatok' })
