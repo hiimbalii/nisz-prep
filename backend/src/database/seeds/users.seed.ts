@@ -1,12 +1,12 @@
 import { User } from '../../users/entities/user.entity';
 import { Connection } from 'typeorm';
 import { Factory, Seeder } from 'typeorm-seeding';
-import { hash, genSalt } from 'bcrypt';
+import { hashSync, genSaltSync } from 'bcrypt';
 import { Permission } from '../../permissions/entities/permission.entity';
 
 export default class CreateUsers implements Seeder {
   public async run(factory: Factory, connection: Connection): Promise<any> {
-    const salt = await genSalt();
+    const salt = genSaltSync();
     const admin = new User();
     admin.id = 1;
     admin.name = 'Admin';
@@ -14,7 +14,7 @@ export default class CreateUsers implements Seeder {
     admin.infectedDate = new Date(0);
     admin.morning = null;
     admin.salt = salt;
-    admin.password = await hash('admin', salt);
+    admin.password = hashSync('admin', salt);
     admin.permissions = [];
     admin.permissions.push(
       await connection.getRepository(Permission).findOne({ where: { code: 'ADMIN' } }),
