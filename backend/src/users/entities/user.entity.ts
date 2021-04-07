@@ -1,6 +1,6 @@
 import { IsNotEmpty } from 'class-validator';
-import { Move } from 'src/moves/entities/move.entity';
-import { Permission } from 'src/permissions/entities/permission.entity';
+import { Move } from '../../moves/entities/move.entity';
+import { Permission } from '../../permissions/entities/permission.entity';
 import {
   BaseEntity,
   Column,
