@@ -1,13 +1,22 @@
 import { IsNotEmpty } from 'class-validator';
 import { Move } from 'src/moves/entities/move.entity';
-import { BaseEntity, Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { Permission } from 'src/permissions/entities/permission.entity';
+import {
+  BaseEntity,
+  Column,
+  Entity,
+  JoinTable,
+  ManyToMany,
+  OneToMany,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 
 @Entity('users')
 export class User extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({ unique: true })
+  @Column()
   @IsNotEmpty()
   name: string;
 
@@ -31,4 +40,8 @@ export class User extends BaseEntity {
 
   @OneToMany(() => Move, move => move.user, { eager: true })
   moves: Move[];
+
+  @ManyToMany(() => Permission, permission => permission.users)
+  @JoinTable()
+  permissions: Permission[];
 }

@@ -1,18 +1,11 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { CreatePlaceEmailDto } from './dto/create-place-email.dto';
 import { CreatePlaceDto } from './dto/create-place.dto';
-import { PlaceRepository } from './places.repostiory';
+import { PlaceRepository } from './places.repository';
 
 @Injectable()
 export class PlacesService {
   constructor(@InjectRepository(PlaceRepository) private placeRepository: PlaceRepository) {}
-
-  async iHaveBeenHereWithEmail(createPlaceEmailDto: CreatePlaceEmailDto) {
-    const { email, lng, lat, date } = createPlaceEmailDto;
-    const userId = await this.placeRepository.getUserId(email);
-    this.iHaveBeenHere(userId, { lng, lat, date });
-  }
 
   iHaveBeenHere(userId: number, createPlaceDto: CreatePlaceDto) {
     const { lng, lat, date } = createPlaceDto;
