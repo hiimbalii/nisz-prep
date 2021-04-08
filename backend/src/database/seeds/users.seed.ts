@@ -3,6 +3,8 @@ import { Connection } from 'typeorm';
 import { Factory, Seeder } from 'typeorm-seeding';
 import { hashSync, genSaltSync } from 'bcrypt';
 import { Permission } from '../../permissions/entities/permission.entity';
+import { Move } from '../../moves/entities/move.entity';
+import { random } from 'faker';
 
 export default class CreateUsers implements Seeder {
   public async run(factory: Factory, connection: Connection): Promise<any> {
@@ -19,13 +21,16 @@ export default class CreateUsers implements Seeder {
     admin.morning = null;
     admin.salt = salt;
     admin.password = hashSync('admin', salt);
-    admin.permissions = [];
-    admin.permissions.push(permission);
+    admin.permissions = [permission];
+    await admin.save();
 
-    try {
-      await admin.save();
-    } catch (err) {
-      if (err.errno !== 1062) console.log(err);
-    }
+    await factory(User)()
+      .map(async (user: User) => {
+        const moves = await factory(Move)().createMany(random.number({ min: 1, max: 10 }));
+
+        user.moves = moves;
+        return user;
+      })
+      .createMany(3);
   }
 }
