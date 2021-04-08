@@ -5,6 +5,7 @@ import { hashSync, genSaltSync } from 'bcrypt';
 import { Permission } from '../../permissions/entities/permission.entity';
 import { Move } from '../../moves/entities/move.entity';
 import { random } from 'faker';
+import { Place } from '../../places/entities/place.entity';
 
 export default class CreateUsers implements Seeder {
   public async run(factory: Factory, connection: Connection): Promise<any> {
@@ -26,11 +27,30 @@ export default class CreateUsers implements Seeder {
 
     await factory(User)()
       .map(async (user: User) => {
-        const moves = await factory(Move)().createMany(random.number({ min: 1, max: 10 }));
+        const moves = await factory(Move)()
+          .map(async (move: Move) => {
+            const latitude = random.number({ min: 458207, max: 486637 }) / 10000;
+            const longitude = random.number({ min: 154713, max: 231493 }) / 10000;
+            let place = await connection.getRepository(Place).findOne({ latitude, longitude });
+            if (!place) {
+              let existPlace;
+              do {
+                place = await factory(Place)().make();
+                existPlace = await connection
+                  .getRepository(Place)
+                  .findOne({ latitude: place.latitude, longitude: place.longitude });
+              } while (!!existPlace);
+              await place.save();
+            }
+
+            move.place = place.id;
+            return move;
+          })
+          .createMany(random.number({ min: 1, max: 10 }));
 
         user.moves = moves;
         return user;
       })
-      .createMany(3);
+      .createMany(10);
   }
 }
