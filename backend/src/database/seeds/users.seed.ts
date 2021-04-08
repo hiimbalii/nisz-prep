@@ -32,16 +32,8 @@ export default class CreateUsers implements Seeder {
             const latitude = random.number({ min: 458207, max: 486637 }) / 10000;
             const longitude = random.number({ min: 154713, max: 231493 }) / 10000;
             let place = await connection.getRepository(Place).findOne({ latitude, longitude });
-            if (!place) {
-              let existPlace;
-              do {
-                place = await factory(Place)().make();
-                existPlace = await connection
-                  .getRepository(Place)
-                  .findOne({ latitude: place.latitude, longitude: place.longitude });
-              } while (!!existPlace);
-              await place.save();
-            }
+            if (!place)
+              place = await factory(Place)().create({ latitude: latitude, longitude: longitude });
 
             move.place = place.id;
             return move;
